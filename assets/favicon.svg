@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Square -->
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#primaryGrad)" />
+  <!-- Wallet Body -->
+  <path d="M12 16C12 14.8954 12.8954 14 14 14H34C35.1046 14 36 14.8954 36 16V18H12V16Z" fill="#93C5FD" opacity="0.8" />
+  <rect x="10" y="18" width="28" height="18" rx="4" fill="#FFFFFF" />
+  <!-- Wallet Flap & Coin / Emblem -->
+  <path d="M26 23H38V31H26C23.7909 31 22 29.2091 22 27C22 24.7909 23.7909 23 26 23Z" fill="#DBEAFE" />
+  <circle cx="31" cy="27" r="2.5" fill="url(#coinGrad)" stroke="#B45309" stroke-width="0.5" />
+  <!-- Rupiah mini symbol -->
+  <path d="M15 24V30M15 24H18C19 24 19.5 24.5 19.5 25.5C19.5 26.5 19 27 18 27H15M17 27L19.5 30" stroke="#1D4ED8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+  <defs>
+    <linearGradient id="logoPrimaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="logoCoinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <!-- Icon Mark -->
+  <rect x="6" y="8" width="44" height="44" rx="12" fill="url(#logoPrimaryGrad)" />
+  <path d="M16 22C16 20.8954 16.8954 20 18 20H38C39.1046 20 40 20.8954 40 22V24H16V22Z" fill="#93C5FD" opacity="0.8" />
+  <rect x="14" y="24" width="28" height="18" rx="4" fill="#FFFFFF" />
+  <path d="M30 29H42V37H30C27.7909 37 26 35.2091 26 33C26 30.7909 27.7909 29 30 29Z" fill="#DBEAFE" />
+  <circle cx="35" cy="33" r="2.5" fill="url(#logoCoinGrad)" stroke="#B45309" stroke-width="0.5" />
+  
+  <!-- Brand Typography -->
+  <text x="62" y="35" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0F172A" letter-spacing="-0.5">Uang<tspan fill="#2563EB">Ku</tspan></text>
+  <text x="63" y="48" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="500" fill="#64748B" letter-spacing="0.5">CATATAN KEUANGAN HARIAN</text>
+</svg>

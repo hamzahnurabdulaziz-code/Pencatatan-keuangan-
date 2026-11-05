@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UangKu – Catatan Keuangan Harian</title>
+  <meta name="description" content="Aplikasi pencatatan keuangan harian pribadi yang cepat, mudah, aman, dan tanpa login.">
+  <meta name="theme-color" content="#2563EB">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row pb-20 md:pb-0">
+
+  <!-- ========================================================================= -->
+  <!-- DESKTOP SIDEBAR NAVIGATION                                                -->
+  <!-- ========================================================================= -->
+  <aside class="hidden md:flex md:w-64 lg:w-72 flex-col bg-white border-r border-slate-200 h-screen sticky top-0 z-30 select-none shadow-xs">
+    <!-- Brand / Logo Area -->
+    <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">Uang<span class="text-blue-600">Ku</span></h1>
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-1">Keuangan Harian</p>
+      </div>
+    </div>
+
+    <!-- Quick Action: Tambah Transaksi -->
+    <div class="p-4">
+      <button 
+        type="button" 
+        data-open-modal="add-transaction"
+        class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm shadow-md shadow-blue-600/25 transition-all transform hover:-translate-y-0.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>Tambah Transaksi</span>
+      </button>
+    </div>
+
+    <!-- Navigation Menu Items -->
+    <nav class="flex-1 px-3 py-2 space-y-1.5 overflow-y-auto">
+      <a href="#dashboard" data-view-nav="dashboard" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all nav-active">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="#transaksi" data-view-nav="transaksi" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all nav-inactive">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        <span>Transaksi</span>
+      </a>
+
+      <a href="#laporan" data-view-nav="laporan" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all nav-inactive">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span>Laporan & Analitik</span>
+      </a>
+
+      <a href="#pengaturan" data-view-nav="pengaturan" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all nav-inactive">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+        <span>Cadangan & Pengaturan</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Bottom Badge / Privacy Note -->
+    <div class="p-4 border-t border-slate-100">
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
+        <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>100% Privat & Offline</span>
+        </div>
+        <p class="text-slate-500 text-[11px] leading-relaxed">Data Anda tersimpan di penyimpanan lokal peramban (localStorage).</p>
+      </div>
+      <div class="mt-3 text-center text-[10px] text-slate-400">
+        UangKu v2.0 • Karya Web Developer
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- MOBILE TOP BAR                                                            -->
+  <!-- ========================================================================= -->
+  <header id="top-mobile-header" class="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+      </div>
+      <div>
+        <span class="font-extrabold text-base tracking-tight text-slate-900">Uang<span class="text-blue-600">Ku</span></span>
+        <span id="current-page-title" class="hidden sm:inline-block text-xs text-slate-400 ml-2 border-l border-slate-200 pl-2">Dashboard</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button 
+        type="button" 
+        data-open-modal="add-transaction"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 active:bg-blue-700 text-white text-xs font-semibold shadow-xs">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span>Tambah</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN WORKSPACE CONTENT                                                    -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: DASHBOARD                                                     -->
+    <!-- ===================================================================== -->
+    <section id="view-dashboard" class="space-y-6">
+      <!-- Welcome & Quick Action Banner -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/10">
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/15 text-blue-50 text-xs font-medium backdrop-blur-xs">
+            <span>✨ Pencatatan Finansial Harian</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Selamat Datang di UangKu</h2>
+          <p class="text-blue-100 text-xs sm:text-sm max-w-xl">
+            Kelola pemasukan dan pengeluaran harian Anda secara teratur untuk mencapai kebebasan finansial yang sehat.
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button 
+            type="button" 
+            data-open-modal="add-transaction"
+            class="px-4 py-2.5 bg-white text-blue-700 hover:bg-blue-50 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Tambah Transaksi</span>
+          </button>
+          <button 
+            type="button" 
+            data-action="export-csv"
+            class="px-3.5 py-2.5 bg-blue-800/60 hover:bg-blue-800 text-white rounded-xl text-xs sm:text-sm font-semibold border border-white/20 transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <span>Ekspor CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Financial Statistics Cards (3 Cards) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Stat Card 1: Total Pemasukan -->
+        <div class="stat-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Pemasukan</span>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="dash-total-income" class="text-2xl lg:text-3xl font-extrabold text-emerald-600 tracking-tight">Rp 0</div>
+            <p class="text-xs text-slate-400 mt-1">Akumulasi seluruh pemasukan</p>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+        </div>
+
+        <!-- Stat Card 2: Total Pengeluaran -->
+        <div class="stat-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Pengeluaran</span>
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7L7 17M7 17H17M7 17V7"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="dash-total-expense" class="text-2xl lg:text-3xl font-extrabold text-rose-600 tracking-tight">Rp 0</div>
+            <p class="text-xs text-slate-400 mt-1">Akumulasi seluruh pengeluaran</p>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+        </div>
+
+        <!-- Stat Card 3: Sisa Saldo -->
+        <div class="stat-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sisa Saldo Kas</span>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="dash-total-balance" class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">Rp 0</div>
+            <div class="mt-2">
+              <span id="dash-financial-status" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+                Memuat status...
+              </span>
+            </div>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-600"></div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Grid: Recent Transactions (Left) + Category Doughnut (Right) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Transactions Card (2 Cols on Desktop) -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900">Transaksi Terbaru</h3>
+                <p class="text-xs text-slate-400">Daftar transaksi yang baru saja dicatat</p>
+              </div>
+              <button 
+                type="button" 
+                onclick="UI.switchView('transaksi')" 
+                class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 group">
+                <span>Lihat Semua</span>
+                <span class="transform group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </button>
+            </div>
+
+            <!-- List Container -->
+            <div id="dash-recent-transactions" class="mt-4 space-y-2.5">
+              <!-- Dynamically Populated -->
+            </div>
+
+            <!-- Empty State for Recent -->
+            <div id="dash-recent-empty" class="hidden py-12 text-center space-y-3">
+              <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+              </div>
+              <p class="text-sm font-medium text-slate-700">Belum ada transaksi tercatat</p>
+              <p class="text-xs text-slate-400 max-w-xs mx-auto">Mulai catat pemasukan dan pengeluaran harian Anda sekarang.</p>
+              <button 
+                type="button" 
+                data-open-modal="add-transaction"
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs">
+                <span>+ Catat Transaksi Pertama</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expense Category Breakdown Card (1 Col on Desktop) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="pb-3 border-b border-slate-100">
+              <h3 class="text-base sm:text-lg font-bold text-slate-900">Proporsi Pengeluaran</h3>
+              <p class="text-xs text-slate-400">Pembagian pengeluaran per kategori</p>
+            </div>
+
+            <!-- Doughnut Canvas Container -->
+            <div class="mt-4 relative min-h-[260px] flex items-center justify-center">
+              <canvas id="chart-expense-category"></canvas>
+              
+              <!-- Empty state for chart -->
+              <div id="expense-chart-empty" class="hidden text-center py-10 space-y-2">
+                <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                  📊
+                </div>
+                <p class="text-xs text-slate-500 font-medium">Belum ada data pengeluaran</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Wisdom Tip Box -->
+          <div class="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-xs text-slate-600 space-y-1">
+            <span class="font-bold text-blue-900 block">💡 Tips Finansial 50/30/20</span>
+            <p class="text-[11px] leading-relaxed text-slate-600">
+              Alokasikan 50% untuk kebutuhan pokok, 30% untuk keinginan, dan minimal 20% untuk tabungan & investasi masa depan.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: TRANSAKSI (MANAJEMEN TRANSAKSI LENGKAP)                        -->
+    <!-- ===================================================================== -->
+    <section id="view-transaksi" class="hidden space-y-6">
+      <!-- Title & Action -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Transaksi</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Cari, filter, edit, dan kelola seluruh riwayat keuangan Anda.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button 
+            type="button" 
+            data-open-modal="add-transaction"
+            class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-xs flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Tambah Transaksi</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter & Search Toolbar Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs space-y-4">
+        <!-- Row 1: Search & Type & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- Live Search -->
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              id="filter-search" 
+              placeholder="Cari keterangan / kategori..." 
+              class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+          </div>
+
+          <!-- Type Filter -->
+          <div>
+            <select 
+              id="filter-type" 
+              class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium">
+              <option value="all">Semua Jenis Transaksi</option>
+              <option value="income">🟢 Pemasukan Saja</option>
+              <option value="expense">🔴 Pengeluaran Saja</option>
+            </select>
+          </div>
+
+          <!-- Category Filter -->
+          <div>
+            <select 
+              id="filter-category" 
+              class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium">
+              <option value="all">Semua Kategori</option>
+              <!-- Dynamically filled -->
+            </select>
+          </div>
+
+          <!-- Period Filter -->
+          <div>
+            <select 
+              id="filter-period" 
+              class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium">
+              <option value="all">Semua Periode</option>
+              <option value="today">Hari Ini</option>
+              <option value="this_month">Bulan Ini</option>
+              <option value="7days">7 Hari Terakhir</option>
+              <option value="30days">30 Hari Terakhir</option>
+              <option value="custom">Pilih Tanggal Manual...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Custom Date Range (Hidden by default, shown when custom selected) & Sorting & Reset -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div id="filter-custom-date-container" class="hidden flex items-center gap-2 w-full md:w-auto">
+            <input 
+              type="date" 
+              id="filter-start-date" 
+              class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+            <span class="text-xs text-slate-400">s/d</span>
+            <input 
+              type="date" 
+              id="filter-end-date" 
+              class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto ml-auto">
+            <span class="text-xs text-slate-400 hidden sm:inline">Urutkan:</span>
+            <select 
+              id="filter-sort" 
+              class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-600">
+              <option value="date_desc">Tanggal Terbaru</option>
+              <option value="date_asc">Tanggal Terlama</option>
+              <option value="amount_desc">Nominal Terbesar</option>
+              <option value="amount_asc">Nominal Terkecil</option>
+            </select>
+            <button 
+              type="button" 
+              id="filter-reset-btn"
+              class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+              Reset Filter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Results Summary Banner -->
+      <div class="bg-blue-50/60 rounded-xl p-4 border border-blue-100 flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-slate-700">Hasil Filter:</span>
+          <span id="filter-count-badge" class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold text-xs">0 Transaksi</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs">
+          <div>Pemasukan: <span id="filter-sum-income" class="font-bold text-emerald-600">Rp 0</span></div>
+          <div>Pengeluaran: <span id="filter-sum-expense" class="font-bold text-rose-600">Rp 0</span></div>
+          <div>Selisih: <span id="filter-sum-diff" class="font-bold text-slate-900">Rp 0</span></div>
+        </div>
+      </div>
+
+      <!-- Transactions Presentation -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <th class="px-5 py-3.5">Tanggal</th>
+                <th class="px-5 py-3.5">Kategori & Jenis</th>
+                <th class="px-5 py-3.5">Keterangan</th>
+                <th class="px-5 py-3.5 text-right">Nominal</th>
+                <th class="px-5 py-3.5 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table-body" class="divide-y divide-slate-100">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Card List View -->
+        <div id="transactions-mobile-list" class="md:hidden p-3 space-y-2.5">
+          <!-- Dynamically populated cards -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="transactions-empty-state" class="hidden py-16 text-center space-y-3">
+          <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-300">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700">Tidak ada transaksi yang cocok</p>
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">Coba sesuaikan kata kunci pencarian, jenis, atau rentang filter tanggal Anda.</p>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div id="transactions-pagination" class="px-5 py-3.5 bg-slate-50/60 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+          <div id="pagination-info">Menampilkan 0 dari 0 transaksi</div>
+          <div class="flex items-center gap-1.5">
+            <button 
+              type="button" 
+              id="pagination-prev" 
+              class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-medium transition-colors">
+              Sebelumnya
+            </button>
+            <button 
+              type="button" 
+              id="pagination-next" 
+              class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-medium transition-colors">
+              Berikutnya
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: LAPORAN & ANALITIK                                            -->
+    <!-- ===================================================================== -->
+    <section id="view-laporan" class="hidden space-y-6">
+      <!-- Title & Month Filter & Print Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Laporan & Analitik Keuangan</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Evaluasi kesehatan finansial, tren bulanan, dan ekspor data.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <select 
+            id="report-month-select" 
+            class="px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-700 font-semibold shadow-xs">
+            <!-- Dynamically populated -->
+          </select>
+          <button 
+            type="button" 
+            data-action="print-report"
+            class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold shadow-xs flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+            </svg>
+            <span>Cetak / PDF</span>
+          </button>
+          <button 
+            type="button" 
+            data-action="export-csv"
+            class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-xs flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <span>Unduh CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Monthly Summary Metrics Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+        <!-- Metric 1: Pemasukan -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Pemasukan Periode</span>
+          <div id="rep-income" class="text-lg sm:text-xl font-extrabold text-emerald-600 mt-1">Rp 0</div>
+        </div>
+
+        <!-- Metric 2: Pengeluaran -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Pengeluaran Periode</span>
+          <div id="rep-expense" class="text-lg sm:text-xl font-extrabold text-rose-600 mt-1">Rp 0</div>
+        </div>
+
+        <!-- Metric 3: Saldo Bersih -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs col-span-2 sm:col-span-1">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Tabungan Bersih</span>
+          <div id="rep-net" class="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">Rp 0</div>
+        </div>
+
+        <!-- Metric 4: Rasio Tabungan -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Saving Rate</span>
+          <div id="rep-savings-rate" class="text-lg sm:text-xl font-extrabold text-blue-600 mt-1">0%</div>
+        </div>
+
+        <!-- Metric 5: Rata-rata Harian -->
+        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase">Rata-rata Keluar / Hari</span>
+          <div id="rep-daily-avg" class="text-lg sm:text-xl font-extrabold text-slate-700 mt-1">Rp 0</div>
+        </div>
+      </div>
+
+      <!-- Charts & Breakdown Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Monthly Comparison Bar Chart -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">Perbandingan Arus Kas 6 Bulan</h3>
+            <p class="text-xs text-slate-400">Pemasukan vs Pengeluaran per bulan</p>
+            <div class="mt-4 relative min-h-[280px]">
+              <canvas id="chart-monthly-comparison"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Breakdown Progress Bars -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">Rincian Kategori Pengeluaran</h3>
+            <p class="text-xs text-slate-400">Distribusi pengeluaran berdasarkan pos anggaran</p>
+            <div id="rep-category-breakdown" class="mt-4 space-y-4 max-h-[320px] overflow-y-auto pr-1">
+              <!-- Dynamically populated progress bars -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 4: PENGATURAN & CADANGAN DATA (BACKUP / RESTORE)                  -->
+    <!-- ===================================================================== -->
+    <section id="view-pengaturan" class="hidden space-y-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Cadangan & Pengaturan</h2>
+        <p class="text-xs sm:text-sm text-slate-500">Kelola cadangan JSON, impor data, dan reset database lokal.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Backup & Restore Card -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Cadangan & Pemulihan (JSON)</h3>
+              <p class="text-xs text-slate-400">Simpan salinan data ke berkas JSON atau pulihkan data lama</p>
+            </div>
+          </div>
+
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-2">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Total Transaksi Tersimpan:</span>
+              <span id="settings-total-records" class="font-bold text-slate-800">0 transaksi</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Estimasi Ruang Penyimpanan:</span>
+              <span id="settings-storage-estimate" class="font-bold text-slate-800">0 KB</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <button 
+              type="button" 
+              data-action="export-json"
+              class="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-xs flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              <span>Unduh Cadangan JSON</span>
+            </button>
+            <button 
+              type="button" 
+              onclick="UI.openModal('import-json-modal')"
+              class="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <span>Pulihkan dari JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Data Management & Demo Card -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Manajemen & Reset Data</h3>
+              <p class="text-xs text-slate-400">Muat data demo atau bersihkan seluruh database lokal</p>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-1">
+              <span class="font-bold">⚠️ Perhatian:</span>
+              <p class="leading-relaxed">Tindakan reset akan menghapus seluruh transaksi dari peramban ini secara permanen. Pastikan Anda telah mengunduh cadangan JSON terlebih dahulu.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+              <button 
+                type="button" 
+                id="btn-load-demo-data"
+                class="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                <span>✨ Muat Data Contoh (Demo)</span>
+              </button>
+              <button 
+                type="button" 
+                id="btn-reset-all-data"
+                class="flex-1 py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                <span>🗑️ Hapus Semua Data</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR                                              -->
+  <!-- ========================================================================= -->
+  <nav id="bottom-mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 px-3 py-1 flex items-center justify-around shadow-lg">
+    <button type="button" data-mobile-nav="dashboard" class="flex flex-col items-center py-1.5 px-3 mobile-nav-active">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+      </svg>
+      <span class="text-[10px] mt-0.5">Dashboard</span>
+    </button>
+
+    <button type="button" data-mobile-nav="transaksi" class="flex flex-col items-center py-1.5 px-3 mobile-nav-inactive">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+      </svg>
+      <span class="text-[10px] mt-0.5">Transaksi</span>
+    </button>
+
+    <!-- FAB Add Button -->
+    <button 
+      type="button" 
+      data-open-modal="add-transaction"
+      class="-mt-5 w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/40 transform active:scale-95 transition-transform"
+      aria-label="Tambah Transaksi Cepat">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+      </svg>
+    </button>
+
+    <button type="button" data-mobile-nav="laporan" class="flex flex-col items-center py-1.5 px-3 mobile-nav-inactive">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+      </svg>
+      <span class="text-[10px] mt-0.5">Laporan</span>
+    </button>
+
+    <button type="button" data-mobile-nav="pengaturan" class="flex flex-col items-center py-1.5 px-3 mobile-nav-inactive">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+      </svg>
+      <span class="text-[10px] mt-0.5">Cadangan</span>
+    </button>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: TAMBAH / EDIT TRANSAKSI                                            -->
+  <!-- ========================================================================= -->
+  <div id="transaction-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <!-- Backdrop Overlay -->
+    <div class="modal-overlay absolute inset-0"></div>
+
+    <!-- Modal Card Content -->
+    <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200/80 max-w-lg w-full overflow-hidden animate-scaleUp z-10">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="modal-transaction-title" class="text-base sm:text-lg font-bold text-slate-900">Tambah Transaksi Baru</h3>
+        <button 
+          type="button" 
+          data-close-modal="transaction-modal" 
+          class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition-colors"
+          aria-label="Tutup Modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form Body -->
+      <form id="transaction-form" class="p-6 space-y-4">
+        <!-- Hidden input for Type (expense or income) -->
+        <input type="hidden" id="tx-type" value="expense">
+
+        <!-- Type Switch Tabs -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Jenis Transaksi</label>
+          <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-xl">
+            <button 
+              type="button" 
+              id="tx-type-expense" 
+              class="flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-rose-600 text-white shadow-xs transition-all">
+              🔴 Pengeluaran
+            </button>
+            <button 
+              type="button" 
+              id="tx-type-income" 
+              class="flex-1 py-2 text-xs sm:text-sm font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+              🟢 Pemasukan
+            </button>
+          </div>
+        </div>
+
+        <!-- Nominal Input with Live Rupiah Preview -->
+        <div>
+          <label for="tx-amount" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Nominal (Rp) *</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-sm font-bold text-slate-400">Rp</span>
+            <input 
+              type="number" 
+              id="tx-amount" 
+              name="amount" 
+              min="1" 
+              step="1" 
+              required 
+              placeholder="Contoh: 50000" 
+              class="w-full pl-11 pr-4 py-2.5 text-sm sm:text-base font-semibold rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 transition-all">
+          </div>
+          <!-- Live Preview badge -->
+          <div id="tx-amount-preview" class="hidden mt-1.5 text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg"></div>
+        </div>
+
+        <!-- Tanggal Input -->
+        <div>
+          <label for="tx-date" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Transaksi *</label>
+          <input 
+            type="date" 
+            id="tx-date" 
+            name="date" 
+            required 
+            class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 transition-all">
+        </div>
+
+        <!-- Kategori Dropdown -->
+        <div>
+          <label for="tx-category" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Kategori Transaksi *</label>
+          <select 
+            id="tx-category" 
+            name="category" 
+            required 
+            class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium transition-all">
+            <!-- Dynamically populated based on active type -->
+          </select>
+        </div>
+
+        <!-- Keterangan / Catatan -->
+        <div>
+          <label for="tx-description" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Keterangan / Catatan</label>
+          <input 
+            type="text" 
+            id="tx-description" 
+            name="description" 
+            maxlength="120"
+            placeholder="Contoh: Beli tiket kereta api, makan siang bersama tim" 
+            class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 transition-all">
+        </div>
+
+        <!-- Modal Actions Footer -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <button 
+            type="button" 
+            data-close-modal="transaction-modal" 
+            class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-800 rounded-xl transition-colors">
+            Batal
+          </button>
+          <button 
+            type="submit" 
+            class="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl shadow-md shadow-blue-600/20 transition-all">
+            Simpan Transaksi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: KONFIRMASI HAPUS TRANSAKSI                                         -->
+  <!-- ========================================================================= -->
+  <div id="delete-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="modal-overlay absolute inset-0"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 text-center space-y-4 animate-scaleUp z-10">
+      <div class="w-12 h-12 mx-auto rounded-full bg-rose-50 text-rose-600 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-base font-bold text-slate-900">Hapus Transaksi Ini?</h3>
+        <p class="text-xs text-slate-500">Tindakan ini tidak dapat dibatalkan. Data akan dihapus dari catatan keuangan Anda.</p>
+      </div>
+
+      <!-- Item Preview Card -->
+      <div id="delete-item-preview"></div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button 
+          type="button" 
+          data-close-modal="delete-modal" 
+          class="flex-1 py-2 text-xs sm:text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+          Batal
+        </button>
+        <button 
+          type="button" 
+          id="confirm-delete-btn" 
+          class="flex-1 py-2 text-xs sm:text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition-colors">
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: IMPOR CADANGAN DATA JSON                                           -->
+  <!-- ========================================================================= -->
+  <div id="import-json-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="modal-overlay absolute inset-0"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4 animate-scaleUp z-10">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900">Impor Cadangan Data (JSON)</h3>
+        <button type="button" data-close-modal="import-json-modal" class="text-slate-400 hover:text-slate-600 p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-600">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Pilih Berkas Cadangan (.json):</label>
+          <input 
+            type="file" 
+            id="json-file-input" 
+            accept=".json,application/json" 
+            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+        </div>
+
+        <div class="pt-2">
+          <label class="block font-semibold text-slate-700 mb-1.5">Metode Pemulihan:</label>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="import-mode" value="replace" checked class="text-blue-600 focus:ring-blue-500">
+              <div>
+                <span class="font-semibold text-slate-800 block">Gantikan Semua Data (Replace)</span>
+                <span class="text-[11px] text-slate-400">Data lama akan digantikan sepenuhnya oleh data dari berkas.</span>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="import-mode" value="merge" class="text-blue-600 focus:ring-blue-500">
+              <div>
+                <span class="font-semibold text-slate-800 block">Gabungkan Data (Merge)</span>
+                <span class="text-[11px] text-slate-400">Menambahkan transaksi baru tanpa menghapus data saat ini.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <button type="button" data-close-modal="import-json-modal" class="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-100">Batal</button>
+        <button type="button" id="btn-submit-import" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs">Mulai Impor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: KONFIRMASI RESET SEMUA DATA                                        -->
+  <!-- ========================================================================= -->
+  <div id="reset-confirm-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="modal-overlay absolute inset-0"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 text-center space-y-4 animate-scaleUp z-10">
+      <div class="w-12 h-12 mx-auto rounded-full bg-rose-50 text-rose-600 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-base font-bold text-slate-900">Bersihkan Seluruh Data?</h3>
+        <p class="text-xs text-slate-500">Semua catatan transaksi akan dihapus dari penyimpanan peramban. Anda tidak dapat mengembalikan data yang sudah dihapus.</p>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button type="button" data-close-modal="reset-confirm-modal" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Batal</button>
+        <button type="button" id="confirm-reset-all-btn" class="flex-1 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs">Hapus Permanen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TOAST NOTIFICATIONS CONTAINER                                             -->
+  <!-- ========================================================================= -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/export-import.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

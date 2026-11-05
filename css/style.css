@@ -1,0 +1,164 @@
+/* ==========================================================================
+   UangKu - Catatan Keuangan Harian
+   Core Styles, Animations, and Layout Support
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-income: #10b981;
+  --color-expense: #ef4444;
+  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Navigation Active / Inactive States */
+.nav-active {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  border-right: 3px solid #2563eb;
+}
+
+.nav-inactive {
+  color: #475569;
+  font-weight: 500;
+}
+.nav-inactive:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Mobile Bottom Nav States */
+.mobile-nav-active {
+  color: #2563eb;
+  font-weight: 600;
+}
+.mobile-nav-inactive {
+  color: #94a3b8;
+}
+
+/* Modal Overlay & Backdrop */
+.modal-overlay {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle Card Glow / Shadow */
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+/* Print Styles */
+@media print {
+  aside,
+  nav,
+  #bottom-mobile-nav,
+  #top-mobile-header,
+  #toast-container,
+  .modal-container,
+  [data-open-modal],
+  #filter-search-container,
+  #transactions-pagination,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .stat-card,
+  .bg-white {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+}
